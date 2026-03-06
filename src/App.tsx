@@ -1,24 +1,165 @@
-import { useState } from 'react'
+import { Component, type ReactNode, useEffect, useState } from 'react'
+import { useViewport } from './hooks/useViewport'
+import { useKeyboardNavigation } from './hooks/useKeyboardNavigation'
+import { useTextureCache } from './store/useTextureCache'
+import { SolarSystem } from './components/three/SolarSystem'
+import { SectionPanel } from './components/ui/SectionPanel'
+import { BackButton } from './components/ui/BackButton'
+import { MobileCarousel } from './components/mobile/MobileCarousel'
+import { KeyboardShortcutsHint } from './components/ui/KeyboardShortcutsHint'
+import { DownloadCVButton } from './components/ui/DownloadCVButton'
+import { BackgroundGradient } from './components/ui/BackgroundGradient'
+import { MiniMap } from './components/ui/MiniMap'
+import { PlayPauseControl } from './components/ui/PlayPauseControl'
+import { HeroHeader } from './components/ui/HeroHeader'
 
-function App() {
-  const [count, setCount] = useState(0)
+interface ErrorBoundaryState {
+  hasError: boolean
+  error: Error | null
+}
 
+class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryState> {
+  constructor(props: { children: ReactNode }) {
+    super(props)
+    this.state = { hasError: false, error: null }
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-[#050510] text-white p-8">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Something went wrong</h1>
+            <p className="text-gray-400 mb-4">{this.state.error?.message}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-purple-600 rounded-lg"
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      )
+    }
+
+    return this.props.children
+  }
+}
+
+interface LoadingScreenProps {
+  progress?: number
+  message?: string
+}
+
+function LoadingScreen({ progress = 0, message = 'Loading universe...' }: LoadingScreenProps) {
+  const percentage = Math.round(progress * 100)
+  
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-8">
-      <h1 className="text-4xl font-bold mb-8">Vite + React + Tailwind</h1>
-      <div className="flex flex-col items-center gap-4">
-        <button
-          onClick={() => setCount((count) => count + 1)}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition-colors"
-        >
-          Count is {count}
-        </button>
-        <p className="text-gray-400">
-          Edit <code className="bg-gray-800 px-2 py-1 rounded">src/App.tsx</code> and save to test HMR
-        </p>
+    <div className="min-h-screen flex items-center justify-center bg-[#050510]">
+      <div className="text-center">
+        <div className="relative w-20 h-20 mx-auto mb-6">
+          <div className="absolute inset-0 border-4 border-purple-500/20 rounded-full" />
+          <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+            <circle
+              cx="40"
+              cy="40"
+              r="36"
+              fill="none"
+              stroke="url(#gradient)"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeDasharray={`${progress * 226} 226`}
+              className="transition-all duration-300"
+            />
+            <defs>
+              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#a855f7" />
+                <stop offset="100%" stopColor="#6366f1" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span className="absolute inset-0 flex items-center justify-center text-sm font-medium text-white">
+            {percentage}%
+          </span>
+        </div>
+        <p className="text-gray-400 text-sm">{message}</p>
+        {progress > 0 && progress < 1 && (
+          <p className="text-gray-500 text-xs mt-2">Loading textures...</p>
+        )}
       </div>
     </div>
   )
+}
+
+function SkipToContent() {
+  return (
+    <a
+      href="#main-content"
+      className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100]
+                 focus:px-4 focus:py-2 focus:bg-purple-600 focus:text-white focus:rounded-lg
+                 focus:outline-none focus:ring-2 focus:ring-purple-400"
+    >
+      Skip to main content
+    </a>
+  )
+}
+
+function DesktopView() {
+  useKeyboardNavigation()
+
+  return (
+    <>
+      <SkipToContent />
+      <div 
+        id="main-content"
+        role="main"
+        aria-label="Interactive solar system portfolio"
+        className="relative w-full h-screen overflow-hidden bg-[#050510]"
+      >
+        <BackgroundGradient />
+        <ErrorBoundary>
+          <SolarSystem />
+        </ErrorBoundary>
+        <HeroHeader />
+        <BackButton />
+        <SectionPanel />
+        <KeyboardShortcutsHint />
+        <DownloadCVButton />
+        <MiniMap />
+        <PlayPauseControl />
+      </div>
+    </>
+  )
+}
+
+function App() {
+  const { isMobile, isLoaded } = useViewport()
+  const [texturesReady, setTexturesReady] = useState(false)
+  const { loading, progress, preloadAll } = useTextureCache()
+
+  useEffect(() => {
+    if (isLoaded && !isMobile && !texturesReady && !loading) {
+      preloadAll().then(() => setTexturesReady(true))
+    }
+  }, [isLoaded, isMobile, texturesReady, loading, preloadAll])
+
+  if (!isLoaded) {
+    return <LoadingScreen message="Initializing..." />
+  }
+
+  if (isMobile) {
+    return <MobileCarousel />
+  }
+
+  if (!texturesReady) {
+    return <LoadingScreen progress={progress} message="Loading textures..." />
+  }
+
+  return <DesktopView />
 }
 
 export default App
