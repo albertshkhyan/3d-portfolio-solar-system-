@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { PortfolioState, SectionId } from '../types'
+import { ANIMATION } from '../config/animation'
 
 export const SECTIONS_ORDER: SectionId[] = [
   'about',
@@ -23,7 +24,7 @@ export const usePortfolioStore = create<PortfolioState>((set, get) => ({
     if (isTransitioning) return
 
     set({ isTransitioning: true, activeSection: section, activeProject: null, isFreeCamera: false })
-    setTimeout(() => set({ isTransitioning: false }), 1500)
+    setTimeout(() => set({ isTransitioning: false }), ANIMATION.CAMERA_TRANSITION_MS)
   },
 
   setActiveProject: (projectId: string | null) => {
@@ -50,7 +51,7 @@ export const usePortfolioStore = create<PortfolioState>((set, get) => ({
       set({ activeProject: null })
     } else {
       set({ isTransitioning: true, activeSection: 'overview', isFreeCamera: false })
-      setTimeout(() => set({ isTransitioning: false }), 1500)
+      setTimeout(() => set({ isTransitioning: false }), ANIMATION.CAMERA_TRANSITION_MS)
     }
   },
 }))

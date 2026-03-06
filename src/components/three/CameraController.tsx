@@ -4,12 +4,12 @@ import { OrbitControls } from '@react-three/drei'
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib'
 import { Vector3 } from 'three'
 import { usePortfolioStore } from '../../store/usePortfolioStore'
-import { usePlanetPositions } from '../../store/usePlanetPositions'
+import { planetPositions } from '../../store/usePlanetPositions'
 import { PLANETS } from '../../data/portfolio'
+import { ANIMATION, CAMERA } from '../../config/animation'
 
-const OVERVIEW_POSITION = new Vector3(30, 25, 30)
-const OVERVIEW_TARGET = new Vector3(0, 0, 0)
-const LERP_FACTOR = 0.05
+const OVERVIEW_POSITION = new Vector3(...CAMERA.OVERVIEW_POSITION)
+const OVERVIEW_TARGET = new Vector3(...CAMERA.OVERVIEW_TARGET)
 
 export function CameraController() {
   const controlsRef = useRef<OrbitControlsType>(null)
@@ -38,7 +38,7 @@ export function CameraController() {
       } else {
         const planet = PLANETS.find((p) => p.id === currentSection)
         if (planet) {
-          const position = usePlanetPositions.getState().getPosition(currentSection)
+          const position = planetPositions.getPosition(currentSection)
           const x = position?.x ?? Math.cos(planet.initialAngle) * planet.distance
           const z = position?.z ?? Math.sin(planet.initialAngle) * planet.distance
           
@@ -52,8 +52,8 @@ export function CameraController() {
     }
 
     if (!currentIsFreeCamera) {
-      camera.position.lerp(targetCamPos.current, LERP_FACTOR)
-      currentLookAt.current.lerp(targetLookAt.current, LERP_FACTOR)
+      camera.position.lerp(targetCamPos.current, ANIMATION.LERP_FACTOR)
+      currentLookAt.current.lerp(targetLookAt.current, ANIMATION.LERP_FACTOR)
       camera.lookAt(currentLookAt.current)
     }
 
@@ -70,11 +70,11 @@ export function CameraController() {
       enablePan={isFreeCamera}
       enableZoom={controlsEnabled}
       enableRotate={controlsEnabled}
-      minDistance={5}
-      maxDistance={100}
-      minPolarAngle={Math.PI / 8}
-      maxPolarAngle={Math.PI / 1.8}
-      dampingFactor={0.05}
+      minDistance={CAMERA.MIN_DISTANCE}
+      maxDistance={CAMERA.MAX_DISTANCE}
+      minPolarAngle={CAMERA.MIN_POLAR_ANGLE}
+      maxPolarAngle={CAMERA.MAX_POLAR_ANGLE}
+      dampingFactor={CAMERA.DAMPING_FACTOR}
       enableDamping
     />
   )

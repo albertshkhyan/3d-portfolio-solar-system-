@@ -1,0 +1,36 @@
+export const ANIMATION = {
+  CAMERA_TRANSITION_MS: 1500,
+  LERP_FACTOR: 0.05,
+  ORBIT_SPEED_MULTIPLIER: 0.3,
+  HOVER_SCALE: 1.15,
+  HOVER_LERP_SPEED: 8,
+} as const
+
+export const Z_INDEX = {
+  CANVAS: 0,
+  BACKGROUND: 10,
+  UI_BASE: 30,
+  PANEL: 40,
+  CONTROLS: 50,
+  MODAL: 60,
+  TOOLTIP: 100,
+} as const
+
+export const MINIMAP = {
+  SIZE: 160,
+  MAX_DISTANCE: 24,
+  UPDATE_INTERVAL_MS: 50,
+} as const
+
+export const CAMERA = {
+  OVERVIEW_POSITION: [30, 25, 30] as const,
+  OVERVIEW_TARGET: [0, 0, 0] as const,
+  FOV: 60,
+  NEAR: 0.1,
+  FAR: 1000,
+  MIN_DISTANCE: 5,
+  MAX_DISTANCE: 100,
+  MIN_POLAR_ANGLE: Math.PI / 8,
+  MAX_POLAR_ANGLE: Math.PI / 1.8,
+  DAMPING_FACTOR: 0.05,
+} as const

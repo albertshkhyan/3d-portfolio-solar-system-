@@ -5,9 +5,10 @@ import { DoubleSide, MathUtils } from 'three'
 import type { Mesh, Group } from 'three'
 import type { Planet as PlanetType } from '../../types'
 import { usePortfolioStore, SECTIONS_ORDER } from '../../store/usePortfolioStore'
-import { usePlanetPositions } from '../../store/usePlanetPositions'
+import { planetPositions } from '../../store/usePlanetPositions'
 import { useCachedTexture } from '../../store/useTextureCache'
 import { PlanetTooltip } from '../ui/PlanetTooltip'
+import { ANIMATION } from '../../config/animation'
 
 interface PlanetProps {
   planet: PlanetType
@@ -25,7 +26,6 @@ export function Planet({ planet, children }: PlanetProps) {
   const activeSection = usePortfolioStore((state) => state.activeSection)
   const setActiveSection = usePortfolioStore((state) => state.setActiveSection)
   const isTransitioning = usePortfolioStore((state) => state.isTransitioning)
-  const setPosition = usePlanetPositions((state) => state.setPosition)
 
   const angleRef = useRef(planet.initialAngle)
   const scaleRef = useRef(1)
@@ -35,8 +35,8 @@ export function Planet({ planet, children }: PlanetProps) {
   useEffect(() => {
     const x = Math.cos(planet.initialAngle) * planet.distance
     const z = Math.sin(planet.initialAngle) * planet.distance
-    setPosition(planet.id, { angle: planet.initialAngle, x, z })
-  }, [planet.id, planet.initialAngle, planet.distance, setPosition])
+    planetPositions.setPosition(planet.id, { angle: planet.initialAngle, x, z })
+  }, [planet.id, planet.initialAngle, planet.distance])
 
   useFrame((_, delta) => {
     if (!groupRef.current || !meshRef.current) return
@@ -48,7 +48,7 @@ export function Planet({ planet, children }: PlanetProps) {
     const isOverview = currentSection === 'overview'
 
     if (!isPaused && (isOverview || !isActive)) {
-      angleRef.current += delta * planet.orbitSpeed * 0.3
+      angleRef.current += delta * planet.orbitSpeed * ANIMATION.ORBIT_SPEED_MULTIPLIER
     }
 
     const x = Math.cos(angleRef.current) * planet.distance
@@ -57,14 +57,14 @@ export function Planet({ planet, children }: PlanetProps) {
     groupRef.current.position.x = x
     groupRef.current.position.z = z
 
-    setPosition(planet.id, { angle: angleRef.current, x, z })
+    planetPositions.setPosition(planet.id, { angle: angleRef.current, x, z })
 
     if (!isPaused) {
       meshRef.current.rotation.y += delta * planet.rotationSpeed
     }
 
-    const targetScale = hovered && isOverview ? 1.15 : 1
-    scaleRef.current = MathUtils.lerp(scaleRef.current, targetScale, delta * 8)
+    const targetScale = hovered && isOverview ? ANIMATION.HOVER_SCALE : 1
+    scaleRef.current = MathUtils.lerp(scaleRef.current, targetScale, delta * ANIMATION.HOVER_LERP_SPEED)
     meshRef.current.scale.setScalar(scaleRef.current)
   })
 

@@ -8,6 +8,7 @@ import { CameraController } from './CameraController'
 import { Moon } from './Moon'
 import { Asteroid } from './Asteroid'
 import { PLANETS, PROJECTS, SKILLS } from '../../data/portfolio'
+import { CAMERA } from '../../config/animation'
 
 function Scene() {
   return (
@@ -52,13 +53,13 @@ function Loader() {
 
 export function SolarSystem() {
   return (
-    <div style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}>
+    <div className="absolute inset-0 w-full h-full">
       <Canvas
         camera={{
-          position: [30, 25, 30],
-          fov: 60,
-          near: 0.1,
-          far: 1000,
+          position: [...CAMERA.OVERVIEW_POSITION],
+          fov: CAMERA.FOV,
+          near: CAMERA.NEAR,
+          far: CAMERA.FAR,
         }}
         gl={{ antialias: true }}
       >

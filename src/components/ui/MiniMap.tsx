@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Map as MapIcon, X } from 'lucide-react'
 import { usePortfolioStore } from '../../store/usePortfolioStore'
-import { usePlanetPositions } from '../../store/usePlanetPositions'
+import { planetPositions } from '../../store/usePlanetPositions'
 import { PLANETS } from '../../data/portfolio'
+import { MINIMAP } from '../../config/animation'
 import type { SectionId } from '../../types'
 
-const MAP_SIZE = 160
-const MAX_DISTANCE = 24
+const MAP_SIZE = MINIMAP.SIZE
+const MAX_DISTANCE = MINIMAP.MAX_DISTANCE
 const SCALE = MAP_SIZE / (MAX_DISTANCE * 2)
 
 const PLANET_COLORS: Record<SectionId, string> = {
@@ -23,27 +24,40 @@ const PLANET_COLORS: Record<SectionId, string> = {
 
 export function MiniMap() {
   const [isOpen, setIsOpen] = useState(true)
-  const [positions, setPositions] = useState<Map<SectionId, { x: number; z: number }>>(new Map())
+  const [, forceUpdate] = useState(0)
   const { activeSection, setActiveSection } = usePortfolioStore()
+  
+  const positionsRef = useRef<Map<SectionId, { x: number; z: number }>>(new Map())
+  const lastUpdateRef = useRef(0)
+  const rafIdRef = useRef<number>(0)
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const newPositions = new Map<SectionId, { x: number; z: number }>()
+  const updatePositions = useCallback(() => {
+    const now = performance.now()
+    if (now - lastUpdateRef.current >= MINIMAP.UPDATE_INTERVAL_MS) {
       PLANETS.forEach((planet) => {
-        const pos = usePlanetPositions.getState().getPosition(planet.id)
+        const pos = planetPositions.getPosition(planet.id)
         if (pos) {
-          newPositions.set(planet.id, { x: pos.x, z: pos.z })
+          positionsRef.current.set(planet.id, { x: pos.x, z: pos.z })
         } else {
           const x = Math.cos(planet.initialAngle) * planet.distance
           const z = Math.sin(planet.initialAngle) * planet.distance
-          newPositions.set(planet.id, { x, z })
+          positionsRef.current.set(planet.id, { x, z })
         }
       })
-      setPositions(newPositions)
-    }, 50)
-
-    return () => clearInterval(interval)
+      lastUpdateRef.current = now
+      forceUpdate((n) => n + 1)
+    }
+    rafIdRef.current = requestAnimationFrame(updatePositions)
   }, [])
+
+  useEffect(() => {
+    if (isOpen) {
+      rafIdRef.current = requestAnimationFrame(updatePositions)
+    }
+    return () => cancelAnimationFrame(rafIdRef.current)
+  }, [isOpen, updatePositions])
+  
+  const positions = positionsRef.current
 
   const handlePlanetClick = (id: SectionId) => {
     if (id !== activeSection) {
