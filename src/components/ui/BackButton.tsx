@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
-import { usePortfolioStore } from '../../store/usePortfolioStore'
+import { useAppStore } from '../../store'
 
 const SECTION_LABELS: Record<string, string> = {
   about: 'About Me',
@@ -13,7 +13,7 @@ const SECTION_LABELS: Record<string, string> = {
 }
 
 export function BackButton() {
-  const { activeSection, goBack, isTransitioning } = usePortfolioStore()
+  const { activeSection, goBack, isTransitioning } = useAppStore()
 
   const currentLabel = SECTION_LABELS[activeSection] || activeSection
 

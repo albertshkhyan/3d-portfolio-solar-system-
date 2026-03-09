@@ -1,7 +1,7 @@
 import { Component, type ReactNode, useEffect, useState } from 'react'
 import { useViewport } from './hooks/useViewport'
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation'
-import { useTextureCache } from './store/useTextureCache'
+import { useAppStore } from './store'
 import { SolarSystem } from './components/three/SolarSystem'
 import { SectionPanel } from './components/ui/SectionPanel'
 import { BackButton } from './components/ui/BackButton'
@@ -139,7 +139,7 @@ function DesktopView() {
 function App() {
   const { isMobile, isLoaded } = useViewport()
   const [texturesReady, setTexturesReady] = useState(false)
-  const { loading, progress, preloadAll } = useTextureCache()
+  const { loading, progress, preloadAll } = useAppStore()
 
   useEffect(() => {
     if (isLoaded && !isMobile && !texturesReady && !loading) {

@@ -1,9 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { usePortfolioStore } from '../../store/usePortfolioStore'
+import { useAppStore } from '../../store'
 import { DEVELOPER } from '../../data/portfolio'
 
 export function HeroHeader() {
-  const activeSection = usePortfolioStore((state) => state.activeSection)
+  const activeSection = useAppStore((state) => state.activeSection)
   const isOverview = activeSection === 'overview'
 
   return (

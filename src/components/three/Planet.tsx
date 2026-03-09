@@ -4,9 +4,8 @@ import { Sphere, Html, Ring } from '@react-three/drei'
 import { DoubleSide, MathUtils } from 'three'
 import type { Mesh, Group } from 'three'
 import type { Planet as PlanetType } from '../../types'
-import { usePortfolioStore, SECTIONS_ORDER } from '../../store/usePortfolioStore'
+import { useAppStore, SECTIONS_ORDER, useCachedTexture } from '../../store'
 import { planetPositions } from '../../store/usePlanetPositions'
-import { useCachedTexture } from '../../store/useTextureCache'
 import { PlanetTooltip } from '../ui/PlanetTooltip'
 import { ANIMATION } from '../../config/animation'
 
@@ -23,9 +22,9 @@ export function Planet({ planet, children }: PlanetProps) {
   const texture = useCachedTexture(planet.texture)
   const ringTexture = useCachedTexture(planet.ringTexture)
 
-  const activeSection = usePortfolioStore((state) => state.activeSection)
-  const setActiveSection = usePortfolioStore((state) => state.setActiveSection)
-  const isTransitioning = usePortfolioStore((state) => state.isTransitioning)
+  const activeSection = useAppStore((state) => state.activeSection)
+  const setActiveSection = useAppStore((state) => state.setActiveSection)
+  const isTransitioning = useAppStore((state) => state.isTransitioning)
 
   const angleRef = useRef(planet.initialAngle)
   const scaleRef = useRef(1)
@@ -41,7 +40,7 @@ export function Planet({ planet, children }: PlanetProps) {
   useFrame((_, delta) => {
     if (!groupRef.current || !meshRef.current) return
 
-    const state = usePortfolioStore.getState()
+    const state = useAppStore.getState()
     const currentSection = state.activeSection
     const isPaused = state.isPaused
     const isActive = currentSection === planet.id

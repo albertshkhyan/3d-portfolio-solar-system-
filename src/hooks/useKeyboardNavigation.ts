@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react'
-import { usePortfolioStore } from '../store/usePortfolioStore'
+import { useAppStore } from '../store'
 import type { SectionId } from '../types'
 
 const SECTION_KEYS: Record<string, SectionId> = {
@@ -24,7 +24,7 @@ const SECTION_LABELS: Record<SectionId, string> = {
 }
 
 export function useKeyboardNavigation() {
-  const { goBack, setActiveSection, activeSection, activeProject, isTransitioning } = usePortfolioStore()
+  const { goBack, setActiveSection, activeSection, activeProject, isTransitioning } = useAppStore()
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {

@@ -3,8 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Sphere, Html } from '@react-three/drei'
 import type { Mesh } from 'three'
 import type { Project } from '../../types'
-import { usePortfolioStore } from '../../store/usePortfolioStore'
-import { useCachedTexture } from '../../store/useTextureCache'
+import { useAppStore, useCachedTexture } from '../../store'
 import { TEXTURES } from '../../data/portfolio'
 
 interface MoonProps {
@@ -19,7 +18,7 @@ export function Moon({ project, index }: MoonProps) {
 
   const texture = useCachedTexture(TEXTURES.moon)
 
-  const { activeSection, setActiveProject } = usePortfolioStore()
+  const { activeSection, setActiveProject } = useAppStore()
 
   const orbitSpeed = 0.3 + index * 0.1
   const initialAngle = (index * Math.PI * 2) / 4
@@ -30,7 +29,7 @@ export function Moon({ project, index }: MoonProps) {
   useFrame((_, delta) => {
     if (!groupRef.current || !meshRef.current) return
 
-    const isPaused = usePortfolioStore.getState().isPaused
+    const isPaused = useAppStore.getState().isPaused
 
     if (!isPaused) {
       angleRef.current += delta * orbitSpeed

@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
 import { Play, Pause, Lock, Unlock } from 'lucide-react'
-import { usePortfolioStore } from '../../store/usePortfolioStore'
+import { useAppStore } from '../../store'
 
 export function PlayPauseControl() {
-  const { isPaused, togglePause, isFreeCamera, toggleFreeCamera } = usePortfolioStore()
+  const { isPaused, togglePause, isFreeCamera, toggleFreeCamera } = useAppStore()
 
   return (
     <motion.div

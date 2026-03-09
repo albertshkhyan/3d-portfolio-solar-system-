@@ -4,7 +4,7 @@ import { Sphere } from '@react-three/drei'
 import type { Mesh } from 'three'
 import { AdditiveBlending } from 'three'
 import { TEXTURES } from '../../data/portfolio'
-import { useCachedTexture } from '../../store/useTextureCache'
+import { useCachedTexture } from '../../store'
 
 export function Sun() {
   const meshRef = useRef<Mesh>(null)

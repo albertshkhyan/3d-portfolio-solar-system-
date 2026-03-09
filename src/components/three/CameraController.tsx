@@ -3,7 +3,7 @@ import { useThree, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import type { OrbitControls as OrbitControlsType } from 'three-stdlib'
 import { Vector3 } from 'three'
-import { usePortfolioStore } from '../../store/usePortfolioStore'
+import { useAppStore } from '../../store'
 import { planetPositions } from '../../store/usePlanetPositions'
 import { PLANETS } from '../../data/portfolio'
 import { ANIMATION, CAMERA } from '../../config/animation'
@@ -14,8 +14,8 @@ const OVERVIEW_TARGET = new Vector3(...CAMERA.OVERVIEW_TARGET)
 export function CameraController() {
   const controlsRef = useRef<OrbitControlsType>(null)
   const { camera } = useThree()
-  const activeSection = usePortfolioStore((state) => state.activeSection)
-  const isFreeCamera = usePortfolioStore((state) => state.isFreeCamera)
+  const activeSection = useAppStore((state) => state.activeSection)
+  const isFreeCamera = useAppStore((state) => state.isFreeCamera)
   
   const targetCamPos = useRef(OVERVIEW_POSITION.clone())
   const targetLookAt = useRef(OVERVIEW_TARGET.clone())
@@ -26,7 +26,7 @@ export function CameraController() {
   const controlsEnabled = isOverview || isFreeCamera
 
   useFrame(() => {
-    const state = usePortfolioStore.getState()
+    const state = useAppStore.getState()
     const currentSection = state.activeSection
     const currentIsFreeCamera = state.isFreeCamera
     const currentIsOverview = currentSection === 'overview'

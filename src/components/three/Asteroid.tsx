@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import type { Group } from 'three'
 import type { Skill } from '../../types'
-import { usePortfolioStore } from '../../store/usePortfolioStore'
+import { useAppStore } from '../../store'
 
 interface AsteroidProps {
   skill: Skill
@@ -42,7 +42,7 @@ export function Asteroid({ skill, index, total }: AsteroidProps) {
   const groupRef = useRef<Group>(null)
   const [hovered, setHovered] = useState(false)
 
-  const { activeSection } = usePortfolioStore()
+  const { activeSection } = useAppStore()
   const isSkillsActive = activeSection === 'skills'
 
   const orbitRadius = categoryRings[skill.category]
@@ -56,7 +56,7 @@ export function Asteroid({ skill, index, total }: AsteroidProps) {
   useFrame((_, delta) => {
     if (!groupRef.current) return
 
-    const isPaused = usePortfolioStore.getState().isPaused
+    const isPaused = useAppStore.getState().isPaused
 
     if (!isPaused) {
       const speedMultiplier = isSkillsActive ? 0.03 : 0.1

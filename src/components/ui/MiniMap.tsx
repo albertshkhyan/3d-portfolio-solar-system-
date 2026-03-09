@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Map as MapIcon, X } from 'lucide-react'
-import { usePortfolioStore } from '../../store/usePortfolioStore'
+import { useAppStore } from '../../store'
 import { planetPositions } from '../../store/usePlanetPositions'
 import { PLANETS } from '../../data/portfolio'
 import { MINIMAP } from '../../config/animation'
@@ -25,7 +25,7 @@ const PLANET_COLORS: Record<SectionId, string> = {
 export function MiniMap() {
   const [isOpen, setIsOpen] = useState(true)
   const [, forceUpdate] = useState(0)
-  const { activeSection, setActiveSection } = usePortfolioStore()
+  const { activeSection, setActiveSection } = useAppStore()
   
   const positionsRef = useRef<Map<SectionId, { x: number; z: number }>>(new Map())
   const lastUpdateRef = useRef(0)

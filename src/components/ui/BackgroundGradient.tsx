@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { usePortfolioStore } from '../../store/usePortfolioStore'
+import { useAppStore } from '../../store'
 import type { SectionId } from '../../types'
 
 const SECTION_THEMES: Record<SectionId, {
@@ -41,7 +41,7 @@ const SECTION_THEMES: Record<SectionId, {
 }
 
 export function BackgroundGradient() {
-  const activeSection = usePortfolioStore((state) => state.activeSection)
+  const activeSection = useAppStore((state) => state.activeSection)
   const theme = SECTION_THEMES[activeSection]
 
   return (
