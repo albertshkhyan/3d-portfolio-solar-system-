@@ -2,6 +2,8 @@
 
 Interactive 3D developer portfolio built as a solar system: planets represent sections (About, Skills, Experience, Projects, etc.) with smooth camera transitions and glassmorphism UI.
 
+**Live:** [https://albertshkhyan.github.io/3d-portfolio-solar-system-/](https://albertshkhyan.github.io/3d-portfolio-solar-system-/)
+
 ## Setup
 
 ```bash
@@ -31,4 +33,4 @@ Open [http://localhost:5173](http://localhost:5173).
 
 ## Deploy
 
-The app is deployed to **GitHub Pages** via GitHub Actions on push to `main`. Enable Pages in **Settings → Pages → Source: GitHub Actions**. Live URL: `https://<username>.github.io/<repo-name>/`.
+The app is deployed to **GitHub Pages** via GitHub Actions on push to `main`. Enable Pages in **Settings → Pages → Source: GitHub Actions**. Live: [albertshkhyan.github.io/3d-portfolio-solar-system-](https://albertshkhyan.github.io/3d-portfolio-solar-system-/).
