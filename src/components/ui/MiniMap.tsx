@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Map as MapIcon, X } from 'lucide-react'
 import { useAppStore } from '../../store'
@@ -24,40 +24,38 @@ const PLANET_COLORS: Record<SectionId, string> = {
 
 export function MiniMap() {
   const [isOpen, setIsOpen] = useState(true)
-  const [, forceUpdate] = useState(0)
+  const [positions, setPositions] = useState<Map<SectionId, { x: number; z: number }>>(new Map())
   const { activeSection, setActiveSection } = useAppStore()
-  
-  const positionsRef = useRef<Map<SectionId, { x: number; z: number }>>(new Map())
-  const lastUpdateRef = useRef(0)
-  const rafIdRef = useRef<number>(0)
-
-  const updatePositions = useCallback(() => {
-    const now = performance.now()
-    if (now - lastUpdateRef.current >= MINIMAP.UPDATE_INTERVAL_MS) {
-      PLANETS.forEach((planet) => {
-        const pos = planetPositions.getPosition(planet.id)
-        if (pos) {
-          positionsRef.current.set(planet.id, { x: pos.x, z: pos.z })
-        } else {
-          const x = Math.cos(planet.initialAngle) * planet.distance
-          const z = Math.sin(planet.initialAngle) * planet.distance
-          positionsRef.current.set(planet.id, { x, z })
-        }
-      })
-      lastUpdateRef.current = now
-      forceUpdate((n) => n + 1)
-    }
-    rafIdRef.current = requestAnimationFrame(updatePositions)
-  }, [])
 
   useEffect(() => {
-    if (isOpen) {
-      rafIdRef.current = requestAnimationFrame(updatePositions)
+    if (!isOpen) return
+
+    let rafId = 0
+    let lastUpdate = 0
+
+    const tick = () => {
+      const now = performance.now()
+      if (now - lastUpdate >= MINIMAP.UPDATE_INTERVAL_MS) {
+        lastUpdate = now
+        const next = new Map<SectionId, { x: number; z: number }>()
+        PLANETS.forEach((planet) => {
+          const pos = planetPositions.getPosition(planet.id)
+          if (pos) {
+            next.set(planet.id, { x: pos.x, z: pos.z })
+          } else {
+            const x = Math.cos(planet.initialAngle) * planet.distance
+            const z = Math.sin(planet.initialAngle) * planet.distance
+            next.set(planet.id, { x, z })
+          }
+        })
+        setPositions(next)
+      }
+      rafId = requestAnimationFrame(tick)
     }
-    return () => cancelAnimationFrame(rafIdRef.current)
-  }, [isOpen, updatePositions])
-  
-  const positions = positionsRef.current
+
+    rafId = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(rafId)
+  }, [isOpen])
 
   const handlePlanetClick = (id: SectionId) => {
     if (id !== activeSection) {

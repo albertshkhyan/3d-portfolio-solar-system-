@@ -12,7 +12,7 @@ export function useViewport() {
     }
 
     checkViewport()
-    setIsLoaded(true)
+    queueMicrotask(() => setIsLoaded(true))
 
     window.addEventListener('resize', checkViewport)
     return () => window.removeEventListener('resize', checkViewport)

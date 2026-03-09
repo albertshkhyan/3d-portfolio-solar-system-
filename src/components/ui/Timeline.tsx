@@ -84,7 +84,7 @@ export function Timeline({ experiences }: TimelineProps) {
                   role="list"
                   aria-label="Technologies used"
                 >
-                  {exp.technologies.map((tech, i) => (
+                  {exp.technologies.map((tech: string, i: number) => (
                     <li
                       key={i}
                       className="px-2 py-0.5 text-[11px] font-medium 

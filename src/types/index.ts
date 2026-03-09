@@ -49,6 +49,8 @@ export interface Experience {
   company: string
   period: string
   description: string[]
+  location?: string
+  technologies?: string[]
 }
 
 export interface PortfolioState {

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactElement } from 'react'
 import { GlassPanel } from '../ui/GlassPanel'
 import { Timeline } from '../ui/Timeline'
 import { SkillBadge } from '../ui/SkillBadge'
@@ -216,7 +216,7 @@ function ContactContent() {
   )
 }
 
-const sectionContent: Record<string, JSX.Element> = {
+const sectionContent: Record<string, ReactElement> = {
   about: <AboutContent />,
   skills: <SkillsContent />,
   experience: <ExperienceContent />,

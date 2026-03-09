@@ -8,20 +8,18 @@ const SHORTCUTS = [
   { key: '0', action: 'Return to overview' },
 ]
 
+const getInitialDismissed = () =>
+  typeof window !== 'undefined' && localStorage.getItem('keyboard-hints-dismissed') === 'true'
+
 export function KeyboardShortcutsHint() {
   const [isVisible, setIsVisible] = useState(false)
-  const [isDismissed, setIsDismissed] = useState(false)
+  const [isDismissed, setIsDismissed] = useState(getInitialDismissed)
 
   useEffect(() => {
-    const dismissed = localStorage.getItem('keyboard-hints-dismissed')
-    if (dismissed) {
-      setIsDismissed(true)
-      return
-    }
-
+    if (isDismissed) return
     const timer = setTimeout(() => setIsVisible(true), 3000)
     return () => clearTimeout(timer)
-  }, [])
+  }, [isDismissed])
 
   const handleDismiss = () => {
     setIsVisible(false)
