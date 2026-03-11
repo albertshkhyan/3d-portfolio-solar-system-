@@ -27,8 +27,11 @@ export function DistanceFog() {
     if (!fog || typeof fog.near === 'undefined') return
     const distance = useAppStore.getState().cameraDistance
     const { near, far } = lerpFog(distance)
+    /* Three.js Fog is updated in place; react-hooks/immutability does not apply. */
+    /* eslint-disable react-hooks/immutability -- mutating scene.fog is intentional for R3F */
     fog.near = near
     fog.far = far
+    /* eslint-enable react-hooks/immutability */
   })
 
   return null
