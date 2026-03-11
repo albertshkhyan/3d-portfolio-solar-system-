@@ -6,24 +6,26 @@ export const DEVELOPER = {
   subtitle: 'Building high-performance web and mobile applications using React, Next.js, and React Native.',
 }
 
-const SOLAR_SCOPE_BASE = 'https://genesis-horizon.solarsystemscope.com/textures/download/'
-const CORS_PROXY = 'https://corsproxy.io/?'
-
-const proxyUrl = (url: string) => `${CORS_PROXY}${encodeURIComponent(url)}`
+/**
+ * Planet textures are loaded from public/textures/ (same-origin, no CORS).
+ * Download from https://www.solarsystemscope.com/textures/ and place in public/textures/
+ * with the filenames below. If a file is missing, the app falls back to solid colors.
+ */
+const TEXTURES_BASE = '/textures/'
 
 export const TEXTURES = {
-  sun: proxyUrl(`${SOLAR_SCOPE_BASE}2k_sun.jpg`),
-  mercury: proxyUrl(`${SOLAR_SCOPE_BASE}2k_mercury.jpg`),
-  venus: proxyUrl(`${SOLAR_SCOPE_BASE}2k_venus_surface.jpg`),
-  earth: proxyUrl(`${SOLAR_SCOPE_BASE}2k_earth_daymap.jpg`),
-  earthClouds: proxyUrl(`${SOLAR_SCOPE_BASE}2k_earth_clouds.jpg`),
-  mars: proxyUrl(`${SOLAR_SCOPE_BASE}2k_mars.jpg`),
-  jupiter: proxyUrl(`${SOLAR_SCOPE_BASE}2k_jupiter.jpg`),
-  saturn: proxyUrl(`${SOLAR_SCOPE_BASE}2k_saturn.jpg`),
-  saturnRing: proxyUrl(`${SOLAR_SCOPE_BASE}2k_saturn_ring_alpha.png`),
-  neptune: proxyUrl(`${SOLAR_SCOPE_BASE}2k_neptune.jpg`),
-  moon: proxyUrl(`${SOLAR_SCOPE_BASE}2k_moon.jpg`),
-  stars: proxyUrl(`${SOLAR_SCOPE_BASE}2k_stars_milky_way.jpg`),
+  sun: `${TEXTURES_BASE}2k_sun.jpg`,
+  mercury: `${TEXTURES_BASE}2k_mercury.jpg`,
+  venus: `${TEXTURES_BASE}2k_venus_surface.jpg`,
+  earth: `${TEXTURES_BASE}2k_earth_daymap.jpg`,
+  earthClouds: `${TEXTURES_BASE}2k_earth_clouds.jpg`,
+  mars: `${TEXTURES_BASE}2k_mars.jpg`,
+  jupiter: `${TEXTURES_BASE}2k_jupiter.jpg`,
+  saturn: `${TEXTURES_BASE}2k_saturn.jpg`,
+  saturnRing: `${TEXTURES_BASE}2k_saturn_ring_alpha.png`,
+  neptune: `${TEXTURES_BASE}2k_neptune.jpg`,
+  moon: `${TEXTURES_BASE}2k_moon.jpg`,
+  stars: `${TEXTURES_BASE}2k_stars_milky_way.jpg`,
 }
 
 export const PLANETS: Planet[] = [

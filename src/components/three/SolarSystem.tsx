@@ -4,11 +4,13 @@ import { Sun } from './Sun'
 import { Planet } from './Planet'
 import { OrbitPath } from './OrbitPath'
 import { StarField } from './StarField'
+import { DistanceFog } from './DistanceFog'
 import { CameraController } from './CameraController'
 import { Moon } from './Moon'
 import { Asteroid } from './Asteroid'
 import { PLANETS, PROJECTS, SKILLS } from '../../data/portfolio'
-import { CAMERA } from '../../config/animation'
+import { CAMERA, FOG } from '../../config/animation'
+import { useViewport } from '../../hooks/useViewport'
 
 function Scene() {
   return (
@@ -37,6 +39,7 @@ function Scene() {
       ))}
 
       <StarField />
+      <DistanceFog />
       <CameraController />
     </>
   )
@@ -52,6 +55,8 @@ function Loader() {
 }
 
 export function SolarSystem() {
+  const { isMobile } = useViewport()
+
   return (
     <div className="absolute inset-0 w-full h-full">
       <Canvas
@@ -61,10 +66,11 @@ export function SolarSystem() {
           near: CAMERA.NEAR,
           far: CAMERA.FAR,
         }}
+        dpr={isMobile ? [1, 1.5] : [1, 2]}
         gl={{ antialias: true }}
       >
         <color attach="background" args={['#050510']} />
-        <fog attach="fog" args={['#050510', 50, 150]} />
+        <fog attach="fog" args={['#050510', FOG.DENSE_NEAR, FOG.DENSE_FAR]} />
         <Suspense fallback={<Loader />}>
           <Scene />
         </Suspense>

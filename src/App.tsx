@@ -5,13 +5,16 @@ import { useAppStore } from './store'
 import { SolarSystem } from './components/three/SolarSystem'
 import { SectionPanel } from './components/ui/SectionPanel'
 import { BackButton } from './components/ui/BackButton'
-import { MobileCarousel } from './components/mobile/MobileCarousel'
+import { MobileSectionNav } from './components/ui/MobileSectionNav'
 import { KeyboardShortcutsHint } from './components/ui/KeyboardShortcutsHint'
 import { DownloadCVButton } from './components/ui/DownloadCVButton'
 import { BackgroundGradient } from './components/ui/BackgroundGradient'
 import { MiniMap } from './components/ui/MiniMap'
 import { PlayPauseControl } from './components/ui/PlayPauseControl'
 import { HeroHeader } from './components/ui/HeroHeader'
+import { CameraDistanceDisplay } from './components/ui/CameraDistanceDisplay'
+import { MilkyWayOverlay } from './components/ui/MilkyWayOverlay'
+import { CAMERA } from './config/animation'
 
 interface ErrorBoundaryState {
   hasError: boolean
@@ -108,13 +111,18 @@ function SkipToContent() {
   )
 }
 
-function DesktopView() {
+function MainView() {
   useKeyboardNavigation()
+  const { isMobile } = useViewport()
+  const cameraDistance = useAppStore((state) => state.cameraDistance)
+  const dimCanvas =
+    cameraDistance >= CAMERA.MILKY_WAY_OVERLAY_THRESHOLD
+  const canvasOpacity = dimCanvas ? 0.2 : 1
 
   return (
     <>
       <SkipToContent />
-      <div 
+      <div
         id="main-content"
         role="main"
         aria-label="Interactive solar system portfolio"
@@ -122,14 +130,22 @@ function DesktopView() {
       >
         <BackgroundGradient />
         <ErrorBoundary>
-          <SolarSystem />
+          <div
+            className="absolute inset-0 w-full h-full transition-opacity duration-500 ease-out"
+            style={{ opacity: canvasOpacity }}
+          >
+            <SolarSystem />
+          </div>
         </ErrorBoundary>
+        <MilkyWayOverlay />
         <HeroHeader />
         <BackButton />
+        <CameraDistanceDisplay />
         <SectionPanel />
-        <KeyboardShortcutsHint />
+        {isMobile && <MobileSectionNav />}
+        {!isMobile && <KeyboardShortcutsHint />}
         <DownloadCVButton />
-        <MiniMap />
+        {!isMobile && <MiniMap />}
         <PlayPauseControl />
       </div>
     </>
@@ -137,29 +153,25 @@ function DesktopView() {
 }
 
 function App() {
-  const { isMobile, isLoaded } = useViewport()
+  const { isLoaded } = useViewport()
   const [texturesReady, setTexturesReady] = useState(false)
   const { loading, progress, preloadAll } = useAppStore()
 
   useEffect(() => {
-    if (isLoaded && !isMobile && !texturesReady && !loading) {
+    if (isLoaded && !texturesReady && !loading) {
       preloadAll().then(() => setTexturesReady(true))
     }
-  }, [isLoaded, isMobile, texturesReady, loading, preloadAll])
+  }, [isLoaded, texturesReady, loading, preloadAll])
 
   if (!isLoaded) {
     return <LoadingScreen message="Initializing..." />
-  }
-
-  if (isMobile) {
-    return <MobileCarousel />
   }
 
   if (!texturesReady) {
     return <LoadingScreen progress={progress} message="Loading textures..." />
   }
 
-  return <DesktopView />
+  return <MainView />
 }
 
 export default App

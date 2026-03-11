@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion'
 import { FileDown } from 'lucide-react'
+import { useViewport } from '../../hooks/useViewport'
 import resumePdf from '../../assets/cv/Albert_Shkhyan_Resume.pdf'
 
 export function DownloadCVButton() {
+  const { isMobile } = useViewport()
+
   return (
     <motion.a
       href={resumePdf}
@@ -11,7 +14,7 @@ export function DownloadCVButton() {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: 0.5, type: 'spring', damping: 20, stiffness: 300 }}
       aria-label="Download resume as PDF"
-      className="fixed bottom-8 left-[88px] z-50 group"
+      className={`fixed z-50 group ${isMobile ? 'bottom-[14rem] left-4' : 'bottom-8 left-[88px]'}`}
     >
       {/* Pulse ring animation */}
       <span className="absolute inset-0 rounded-2xl animate-ping-slow bg-purple-500/20" />

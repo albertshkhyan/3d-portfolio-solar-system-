@@ -13,6 +13,8 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173).
 
+**Optional – planet textures:** For real planet images in the 3D scene and mobile nav, download the 2k textures from [Solar System Scope](https://www.solarsystemscope.com/textures/) and place them in `public/textures/` (see `public/textures/README.md` for exact filenames). Without them, the app uses solid color fallbacks.
+
 ## Scripts
 
 | Command       | Description              |
