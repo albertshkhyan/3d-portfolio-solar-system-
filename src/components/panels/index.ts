@@ -5,4 +5,10 @@ export { ProjectsPanel } from './ProjectsPanel'
 export { ArchitecturePanel } from './ArchitecturePanel'
 export { DevOpsPanel } from './DevOpsPanel'
 export { ContactPanel } from './ContactPanel'
-export { panelVariants, SECTION_NAMES } from './shared'
+export {
+  panelVariants,
+  panelVariantsMobile,
+  SECTION_NAMES,
+  PANEL_TOP_COLLAPSED,
+  PANEL_TOP_EXPANDED,
+} from './shared'

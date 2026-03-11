@@ -9,12 +9,24 @@ import { TEXTURES, PLANETS } from '../data/portfolio'
 // Types
 // ============================================================================
 
+export type ZoomIntent = 'in' | 'out' | 'reset' | 'milky-way' | null
+
 interface UIState {
   activeSection: SectionId
   activeProject: string | null
   isTransitioning: boolean
   isPaused: boolean
   isFreeCamera: boolean
+  zoomIntent: ZoomIntent
+  /** Current camera distance from target (updated from CameraController) */
+  cameraDistance: number
+  /** Camera spherical angles (radians) for parallax: azimuth (yaw), polar (pitch from top) */
+  cameraAzimuth: number
+  cameraPolar: number
+  /** When true, orbit speeds use Kepler-style (k / sqrt(distance)) */
+  useKeplerOrbits: boolean
+  /** 3D sun projected to screen (%), for overlay label; visible false when behind camera */
+  sunOverlayPosition: { x: number; y: number; visible: boolean }
 }
 
 interface UIActions {
@@ -24,6 +36,11 @@ interface UIActions {
   togglePause: () => void
   toggleFreeCamera: () => void
   goBack: () => void
+  setZoomIntent: (intent: ZoomIntent) => void
+  setCameraDistance: (distance: number) => void
+  setCameraSpherical: (azimuth: number, polar: number) => void
+  setUseKeplerOrbits: (use: boolean) => void
+  setSunOverlayPosition: (pos: { x: number; y: number; visible: boolean }) => void
 }
 
 interface TextureState {
@@ -58,6 +75,7 @@ export const SECTIONS_ORDER: SectionId[] = [
 // ============================================================================
 
 const textureCache = new Map<string, Texture>()
+let hasLoggedTextureWarning = false
 
 function getAllTextureUrls(): string[] {
   const urls: string[] = [TEXTURES.sun, TEXTURES.moon, TEXTURES.stars]
@@ -85,9 +103,14 @@ function loadTexture(url: string): Promise<Texture> {
         resolve(texture)
       },
       undefined,
-      (error) => {
-        console.error(`[TextureCache] Failed to load: ${url}`, error)
-        reject(error)
+      () => {
+        if (!hasLoggedTextureWarning) {
+          hasLoggedTextureWarning = true
+          console.warn(
+            '[TextureCache] Some textures could not be loaded. Add files to public/textures/ (see public/textures/README.md). Using fallback colors.'
+          )
+        }
+        reject(new Error(`Failed to load: ${url}`))
       }
     )
   })
@@ -104,6 +127,12 @@ export const useAppStore = create<AppState>((set, get) => ({
   isTransitioning: false,
   isPaused: false,
   isFreeCamera: false,
+  zoomIntent: null,
+  cameraDistance: 0,
+  cameraAzimuth: 0,
+  cameraPolar: Math.PI / 2,
+  useKeplerOrbits: false,
+  sunOverlayPosition: { x: 50, y: 50, visible: true },
 
   // Texture State
   loading: false,
@@ -150,6 +179,26 @@ export const useAppStore = create<AppState>((set, get) => ({
       set({ isTransitioning: true, activeSection: 'overview', isFreeCamera: false })
       setTimeout(() => set({ isTransitioning: false }), ANIMATION.CAMERA_TRANSITION_MS)
     }
+  },
+
+  setZoomIntent: (intent: ZoomIntent) => {
+    set({ zoomIntent: intent })
+  },
+
+  setCameraDistance: (distance: number) => {
+    set({ cameraDistance: distance })
+  },
+
+  setCameraSpherical: (azimuth: number, polar: number) => {
+    set({ cameraAzimuth: azimuth, cameraPolar: polar })
+  },
+
+  setUseKeplerOrbits: (use: boolean) => {
+    set({ useKeplerOrbits: use })
+  },
+
+  setSunOverlayPosition: (pos: { x: number; y: number; visible: boolean }) => {
+    set({ sunOverlayPosition: pos })
   },
 
   // Texture Actions

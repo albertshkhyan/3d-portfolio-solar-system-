@@ -1,22 +1,27 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Stars } from '@react-three/drei'
-import type { Points } from 'three'
+import type { Group } from 'three'
+import { useAppStore } from '../../store'
+import { ANIMATION } from '../../config/animation'
+
+const PARALLAX = ANIMATION.STAR_FIELD_PARALLAX_FACTOR
+const POLAR_NEUTRAL = Math.PI / 2
 
 export function StarField() {
-  const starsRef = useRef<Points>(null)
+  const groupRef = useRef<Group>(null)
 
-  useFrame((_, delta) => {
-    if (starsRef.current) {
-      starsRef.current.rotation.y += delta * 0.01
-      starsRef.current.rotation.x += delta * 0.005
-    }
+  useFrame(() => {
+    const group = groupRef.current
+    if (!group) return
+    const { cameraAzimuth, cameraPolar } = useAppStore.getState()
+    group.rotation.y = cameraAzimuth * PARALLAX
+    group.rotation.x = (cameraPolar - POLAR_NEUTRAL) * PARALLAX
   })
 
   return (
-    <>
+    <group ref={groupRef}>
       <Stars
-        ref={starsRef}
         radius={100}
         depth={50}
         count={5000}
@@ -34,6 +39,6 @@ export function StarField() {
         fade
         speed={0.5}
       />
-    </>
+    </group>
   )
 }

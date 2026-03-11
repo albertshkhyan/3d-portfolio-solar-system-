@@ -4,6 +4,10 @@ export const PANEL_PADDING = 'px-7 py-6'
 export const TITLE_SPACING = 'mb-1'
 export const CONTENT_SPACING = 'space-y-4'
 
+/** Mobile sheet: top offset when collapsed / expanded */
+export const PANEL_TOP_COLLAPSED = '15%'
+export const PANEL_TOP_EXPANDED = '0%'
+
 export const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -76,6 +80,20 @@ export const panelVariants: Variants = {
       duration: 0.25,
       ease: [0.4, 0, 1, 1],
     },
+  },
+}
+
+export const panelVariantsMobile: Variants = {
+  hidden: { y: '100%', opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: { type: 'spring' as const, damping: 30, stiffness: 300 },
+  },
+  exit: {
+    y: '100%',
+    opacity: 0,
+    transition: { type: 'tween' as const, duration: 0.25, ease: [0.4, 0, 1, 1] },
   },
 }
 

@@ -47,7 +47,10 @@ export function Planet({ planet, children }: PlanetProps) {
     const isOverview = currentSection === 'overview'
 
     if (!isPaused && (isOverview || !isActive)) {
-      angleRef.current += delta * planet.orbitSpeed * ANIMATION.ORBIT_SPEED_MULTIPLIER
+      const orbitSpeed = state.useKeplerOrbits
+        ? ANIMATION.KEPLER_ORBIT_K / Math.sqrt(planet.distance)
+        : planet.orbitSpeed
+      angleRef.current += delta * orbitSpeed * ANIMATION.ORBIT_SPEED_MULTIPLIER
     }
 
     const x = Math.cos(angleRef.current) * planet.distance

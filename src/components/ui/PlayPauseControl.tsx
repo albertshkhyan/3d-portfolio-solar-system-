@@ -1,20 +1,29 @@
 import { motion } from 'framer-motion'
-import { Play, Pause, Lock, Unlock } from 'lucide-react'
+import { Play, Pause, Lock, Unlock, Orbit } from 'lucide-react'
 import { useAppStore } from '../../store'
+import { useViewport } from '../../hooks/useViewport'
 
 export function PlayPauseControl() {
-  const { isPaused, togglePause, isFreeCamera, toggleFreeCamera } = useAppStore()
+  const {
+    isPaused,
+    togglePause,
+    isFreeCamera,
+    toggleFreeCamera,
+    useKeplerOrbits,
+    setUseKeplerOrbits,
+  } = useAppStore()
+  const { isMobile } = useViewport()
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5, type: 'spring', damping: 20 }}
-      className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50"
+      className={`fixed left-1/2 -translate-x-1/2 z-50 ${isMobile ? 'bottom-[8.5rem]' : 'bottom-8'}`}
     >
-      <div className="glass-panel px-5 py-3 rounded-full flex items-center gap-5">
+      <div className="glass-panel px-5 py-3.5 rounded-full flex items-center gap-4">
         {/* Play/Pause Control */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5">
           <motion.button
             onClick={togglePause}
             className="relative w-10 h-10 rounded-full flex items-center justify-center
@@ -56,10 +65,40 @@ export function PlayPauseControl() {
         </div>
 
         {/* Divider */}
-        <div className="w-px h-10 bg-white/10" />
+        <div className="w-px h-11 bg-white/10 flex-shrink-0" />
+
+        {/* Kepler / Realistic orbits toggle */}
+        <div className="flex items-center gap-2">
+          <motion.button
+            type="button"
+            onClick={() => setUseKeplerOrbits(!useKeplerOrbits)}
+            className={`flex flex-col items-center gap-0.5 w-9 h-9 rounded-full flex-shrink-0 justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent ${
+              useKeplerOrbits
+                ? 'bg-amber-500/30 hover:bg-amber-500/40 text-amber-200'
+                : 'bg-white/10 hover:bg-white/20 text-white'
+            }`}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label={useKeplerOrbits ? 'Use normal orbit speeds' : 'Use Kepler-style orbit speeds (inner planets faster)'}
+            title={useKeplerOrbits ? 'Orbits: Kepler' : 'Orbits: Normal'}
+          >
+            <Orbit size={16} aria-hidden />
+          </motion.button>
+          <div className="flex flex-col min-w-0">
+            <span className="text-[10px] text-white/50 uppercase tracking-wider">
+              Orbits
+            </span>
+            <span className="text-xs font-medium text-white truncate">
+              {useKeplerOrbits ? 'Kepler' : 'Normal'}
+            </span>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="w-px h-11 bg-white/10 flex-shrink-0" />
 
         {/* Camera Lock/Unlock Control */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3.5">
           <motion.button
             onClick={toggleFreeCamera}
             className={`relative w-10 h-10 rounded-full flex items-center justify-center
@@ -105,6 +144,7 @@ export function PlayPauseControl() {
             </span>
           </div>
         </div>
+
       </div>
     </motion.div>
   )
