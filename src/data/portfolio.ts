@@ -7,25 +7,25 @@ export const DEVELOPER = {
 }
 
 /**
- * Planet textures are loaded from public/textures/ (same-origin, no CORS).
- * Download from https://www.solarsystemscope.com/textures/ and place in public/textures/
- * with the filenames below. If a file is missing, the app falls back to solid colors.
+ * Planet textures from public CDN (jsDelivr + Artastra). CORS-enabled; no self-hosting required.
+ * Fallback: set TEXTURES_BASE to '/textures/' and add files to public/textures/ for offline/self-host.
  */
-const TEXTURES_BASE = '/textures/'
+const TEXTURES_BASE = 'https://cdn.jsdelivr.net/npm/artastra@1.0.8/textures/'
 
 export const TEXTURES = {
-  sun: `${TEXTURES_BASE}2k_sun.jpg`,
+  sun: `${TEXTURES_BASE}sun.jpg`,
   mercury: `${TEXTURES_BASE}2k_mercury.jpg`,
-  venus: `${TEXTURES_BASE}2k_venus_surface.jpg`,
-  earth: `${TEXTURES_BASE}2k_earth_daymap.jpg`,
-  earthClouds: `${TEXTURES_BASE}2k_earth_clouds.jpg`,
-  mars: `${TEXTURES_BASE}2k_mars.jpg`,
-  jupiter: `${TEXTURES_BASE}2k_jupiter.jpg`,
-  saturn: `${TEXTURES_BASE}2k_saturn.jpg`,
-  saturnRing: `${TEXTURES_BASE}2k_saturn_ring_alpha.png`,
+  venus: `${TEXTURES_BASE}4k_venus_atmosphere.jpg`,
+  earth: `${TEXTURES_BASE}earth.jpg`,
+  earthClouds: `${TEXTURES_BASE}8k_earth_clouds.jpg`,
+  mars: `${TEXTURES_BASE}mars.jpg`,
+  jupiter: `${TEXTURES_BASE}jupiter.jpg`,
+  saturn: `${TEXTURES_BASE}8k_saturn.jpg`,
+  saturnRing: `${TEXTURES_BASE}saturn_rings_black2.png`,
   neptune: `${TEXTURES_BASE}2k_neptune.jpg`,
-  moon: `${TEXTURES_BASE}2k_moon.jpg`,
-  stars: `${TEXTURES_BASE}2k_stars_milky_way.jpg`,
+  moon: `${TEXTURES_BASE}moon.jpg`,
+  /** Not in Artastra; preload uses sun as placeholder so loader doesn't block (starfield uses procedural Stars). */
+  stars: `${TEXTURES_BASE}sun.jpg`,
 }
 
 export const PLANETS: Planet[] = [
