@@ -107,7 +107,7 @@ function loadTexture(url: string): Promise<Texture> {
         if (!hasLoggedTextureWarning) {
           hasLoggedTextureWarning = true
           console.warn(
-            '[TextureCache] Some textures could not be loaded. Add files to public/textures/ (see public/textures/README.md). Using fallback colors.'
+            '[TextureCache] Some textures could not be loaded (CDN or network). Using fallback colors.'
           )
         }
         reject(new Error(`Failed to load: ${url}`))
@@ -126,7 +126,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   activeProject: null,
   isTransitioning: false,
   isPaused: false,
-  isFreeCamera: false,
+  isFreeCamera: true,
   zoomIntent: null,
   cameraDistance: 0,
   cameraAzimuth: 0,
